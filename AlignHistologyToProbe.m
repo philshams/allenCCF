@@ -7,7 +7,7 @@
 
 
 % directory of histology
-processed_images_folder = 'C:\Drive\Histology\for tutorial - sample data\SS096_cooked\processed'; 
+processed_images_folder = 'C:\Drive\Histology\for tutorial - sample data\slices\processed'; 
 
 % name the saved probe points, to avoid overwriting another set of probes going in the same folder
 probe_save_name_suffix = ''; 

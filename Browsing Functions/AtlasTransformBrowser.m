@@ -101,15 +101,6 @@ fprintf(1, 'a: toggle to viewing boundaries \n');
 fprintf(1, 'v: toggle to color atlas mode \n');
 fprintf(1, 'g: toggle gridlines \n');
 
-
-
-
-
-
-
-
-
-
 fprintf(1, 'space: display controls \n \n');
 
 
