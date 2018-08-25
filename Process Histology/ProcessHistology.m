@@ -15,10 +15,10 @@
 % If you have high-res individual images, put
 % them in this image_folder, and just skip the 'crop and save' cell below)
 %
-image_folder = 'C:\Drive\Histology\for tutorial - sample data\slices';
+image_folder = 'C:\Drive\Histology\for tutorial - sample data\SS096_raw';
 
 % directory to save the processed images -- can be the same as the above image_folder
-save_folder = 'C:\Drive\Histology\for tutorial - sample data\slices';
+save_folder = 'C:\Drive\Histology\for tutorial - sample data\SS096_raw';
 
 % name of images, in order anterior to posterior or vice versa
 % once these are downsampled, using the HistologyBrowser function, they
@@ -29,7 +29,7 @@ image_file_names = natsortfiles({image_file_names.name});
 
 % if the images are individual slices as opposed to an image of multiple
 % slices, which must each be cropped and saved
-image_file_are_individual_slices = true;
+image_files_are_individual_slices = false;
 
 % use images that are already at reference atlas (here, 10um/pixel) resolution
 use_already_downsampled_image = false; 
@@ -84,21 +84,17 @@ close all
 % this will downsample and allow you to adjust contrast of each channel of each image from image_file_names
 %
 % if the images are already downsampled (use_already_downsampled_image = true), this will allow
-% you to adjust the contrast of each channel if adjust_histology_contrast = true
-if  adjust_histology_contrast || ~use_already_downsampled_image
-    % Open Histology Viewer figure
-    try; figure(histology_figure);
-    catch; histology_figure = figure('Name','Histology Viewer'); end
-    warning('off', 'images:initSize:adjustingMag'); warning('off', 'MATLAB:colon:nonIntegerIndex');
-    
-    % Function to downsample and adjust histology image
-    HistologyBrowser(histology_figure, save_folder, image_folder, image_file_names, folder_processed_images, image_file_are_individual_slices, ...
-                use_already_downsampled_image, microns_per_pixel, microns_per_pixel_after_downsampling, gain)
-else
-    % if use_already_downsampled_image = true and adjust_histology_contrast = false
-    disp('downsampled images already available:')
-    disp(image_file_names)
-end
+% you to adjust the contrast of each channel
+%
+% Open Histology Viewer figure
+try; figure(histology_figure);
+catch; histology_figure = figure('Name','Histology Viewer'); end
+warning('off', 'images:initSize:adjustingMag'); warning('off', 'MATLAB:colon:nonIntegerIndex');
+
+% Function to downsample and adjust histology image
+HistologyBrowser(histology_figure, save_folder, image_folder, image_file_names, folder_processed_images, image_files_are_individual_slices, ...
+            use_already_downsampled_image, microns_per_pixel, microns_per_pixel_after_downsampling, gain)
+
   
 
 %% CROP AND SAVE SLICES -- run once the above is done, if image_file_are_individual_slices = false
@@ -112,7 +108,7 @@ close all
 % in the save_folder -- this function allows you to crop all the slices you 
 % would like to process im each image, by drawing rectangles around them in the figure. 
 % These can then be further processed in the next cell
-if ~image_file_are_individual_slices
+if ~image_files_are_individual_slices
     histology_figure = figure('Name','Histology Viewer');
     HistologyCropper(histology_figure, save_folder, image_file_names, reference_size, save_file_name, use_already_downsampled_image)
 else
