@@ -15,10 +15,10 @@
 % If you have high-res individual images, put
 % them in this image_folder, and just skip the 'crop and save' cell below)
 %
-image_folder = 'C:\Drive\Histology\for tutorial - sample data\SS096_raw';
+image_folder = 'C:\Drive\Histology\cfos';
 
 % directory to save the processed images -- can be the same as the above image_folder
-save_folder = 'C:\Drive\Histology\for tutorial - sample data\SS096_raw';
+save_folder = 'C:\Drive\Histology\cfos';
 
 % name of images, in order anterior to posterior or vice versa
 % once these are downsampled, using the HistologyBrowser function, they
@@ -29,10 +29,10 @@ image_file_names = natsortfiles({image_file_names.name});
 
 % if the images are individual slices as opposed to an image of multiple
 % slices, which must each be cropped and saved
-image_files_are_individual_slices = false;
+image_files_are_individual_slices = true;
 
 % use images that are already at reference atlas (here, 10um/pixel) resolution
-use_already_downsampled_image = false; 
+use_already_downsampled_image = true; 
 
 % pixel size parameters: microns_per_pixel of large images in the image
 % folder (if use_already_downsampled_images below is set to false);
@@ -49,10 +49,6 @@ microns_per_pixel_after_downsampling = 10;
 % name to save cropped slices as; e.g. the third cropped slice from the 2nd
 % image containing many slices will be saved as: save_folder/processed/save_file_name2_3.tif
 save_file_name = 'SS096_';
-
-% adjust the contrast of the histology images before cropping them, even if
-% they are already downsampled
-adjust_histology_contrast = true; 
 
 % increase gain if for some reason the images are not bright enough
 gain = 1; 
