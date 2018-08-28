@@ -205,7 +205,7 @@ yyaxis left
 set(gca, 'YTick', midY, 'YTickLabel', acr);
 set(gca, 'YDir','reverse');
 if show_parent_category; set(gca,'Color',[1 1 1]*.8);
-else; set(gca,'Color',[1 1 1]*.6); end
+else; set(gca,'Color',[1 1 1]*.7); end
 xlabel('dist to nearest (um)','color','k');
 
 % ylim([0 yc(borders(end-1))])
