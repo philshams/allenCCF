@@ -66,7 +66,7 @@ ud.im = plotTVslice(reference_image);
 ud.ref = uint8(squeeze(templateVolume(ud.currentSlice,:,:)));
 ud.curr_im = uint8(squeeze(templateVolume(ud.currentSlice,:,:)));
 ud.curr_slice_trans = uint8(squeeze(templateVolume(ud.currentSlice,:,:)));
-ud.im_annotation = zeros(ud.ref_size,'uint16');
+ud.im_annotation = squeeze(annotationVolume(ud.currentSlice,:,:));
 ud.atlas_boundaries = zeros(ud.ref_size,'uint16');
 ud.offset_map = zeros(ud.ref_size);
 ud.loaded = 10;
@@ -115,7 +115,7 @@ switch lower(keydata.Key)
         if ~ud.showOverlay
             delete(ud.overlayAx); ud.overlayAx = [];
             disp('Overlay OFF');
-        else; disp('Overlay on!');
+        elseif ~ud.viewColorAtlas; disp('Overlay on!');
         end
 
     case 'p' % toggle mode to register clicks as Probe points
@@ -251,7 +251,11 @@ switch lower(keydata.Key)
     case 'v' % toggle View Color Atlas
         ud.viewColorAtlas = ~ud.viewColorAtlas;
         
-        if ud.viewColorAtlas  
+        if ud.viewColorAtlas
+            % turn off overlay first
+            ud.showOverlay = 0;
+            ref_mode = false;
+            delete(ud.overlayAx); ud.overlayAx = [];            
             set(ud.im, 'CData', ud.im_annotation)
             cmap = allen_ccf_colormap('2017');
             colormap(ud.atlasAx, cmap); caxis(ud.atlasAx, [1 size(cmap,1)]);   
@@ -275,18 +279,21 @@ switch lower(keydata.Key)
         disp('switch scroll mode -- scroll along A/P axis')
  
     case 'n' % new probe
-        new_num_probes = size(ud.pointList,1) + 1; disp(['probe ' num2str(new_num_probes) ' added (' ud.ProbeColor{new_num_probes} ')']);
-        probe_point_list = cell(new_num_probes,1); probe_hands_list = cell(new_num_probes,3); 
-        for prev_probe = 1:new_num_probes-1
-            probe_point_list{prev_probe,1} = ud.pointList{prev_probe,1};
-            probe_point_list{prev_probe,2} = ud.pointList{prev_probe,2};
-            probe_point_list{prev_probe,3} = ud.pointList{prev_probe,3};
-            probe_hands_list{prev_probe, 1} = ud.pointHands{prev_probe, 1};
-            probe_hands_list{prev_probe, 2} = ud.pointHands{prev_probe, 2};
-            probe_hands_list{prev_probe, 3} = ud.pointHands{prev_probe, 3};
-        end; probe_point_list{new_num_probes,1} = zeros(0,3);
-        ud.pointList = probe_point_list; ud.pointHands = probe_hands_list;
-        ud.currentProbe = new_num_probes;
+        new_num_probes = size(ud.pointList,1) + 1; 
+        if new_num_probes <= size(ud.ProbeColors,1)
+            disp(['probe ' num2str(new_num_probes) ' added (' ud.ProbeColor{new_num_probes} ')']);
+            probe_point_list = cell(new_num_probes,1); probe_hands_list = cell(new_num_probes,3); 
+            for prev_probe = 1:new_num_probes-1
+                probe_point_list{prev_probe,1} = ud.pointList{prev_probe,1};
+                probe_point_list{prev_probe,2} = ud.pointList{prev_probe,2};
+                probe_point_list{prev_probe,3} = ud.pointList{prev_probe,3};
+                probe_hands_list{prev_probe, 1} = ud.pointHands{prev_probe, 1};
+                probe_hands_list{prev_probe, 2} = ud.pointHands{prev_probe, 2};
+                probe_hands_list{prev_probe, 3} = ud.pointHands{prev_probe, 3};
+            end; probe_point_list{new_num_probes,1} = zeros(0,3);
+            ud.pointList = probe_point_list; ud.pointHands = probe_hands_list;
+            ud.currentProbe = new_num_probes;
+        end
     case 's' % save probe trajectory and points of each probe per histology image (and associated histology name/number)
         pointList.pointList = ud.pointList;
         pointList.pointHands = ud.pointHands;
