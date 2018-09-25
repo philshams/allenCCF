@@ -5,23 +5,23 @@
 %% ENTER PARAMETERS AND FILE LOCATION
 
 % file location of probe points
-processed_images_folder = 'C:\Drive\Histology\for tutorial - sample data\Richards_done\processed';
+processed_images_folder = 'C:\Drive\Histology\for tutorial - sample data\Richards_done\processed_2';
 
 % directory of reference atlas files
 annotation_volume_location = 'C:\Drive\Histology\for tutorial\annotation_volume_10um_by_index.npy';
 structure_tree_location = 'C:\Drive\Histology\for tutorial\structure_tree_safe_2017.csv';
 
 % name of the saved probe points
-probe_save_name_suffix = 'tt';
+probe_save_name_suffix = 't3 - Copy';
 
 % either set to 'all' or a list of indices from the clicked probes in this file, e.g. [2,3]
-probes_to_analyze = 9; %'all';  % [1 2]
+probes_to_analyze = 6; %'all';  % [1 2]
 
 % -----------
 % parameters
 % -----------
 % how far into the brain did you go from the surface, either for each probe or just one number for all -- in mm
-probe_lengths = 4; 
+probe_lengths = 2.75; 
 
 % from the bottom tip, how much of the probe contained recording sites -- in mm
 active_probe_length = 3.84;
@@ -37,7 +37,7 @@ distance_past_tip_to_plot = .5;
 
 % set scaling e.g. based on lining up the ephys with the atlas
 % set to *false* to get scaling automatically from the clicked points
-scaling_factor = false; 
+scaling_factor = 1; 
 
 % show a table of regions that the probe goes through, in the console
 show_region_table = true;
@@ -184,6 +184,11 @@ error_length = round(probe_radius / 10);
 % find and regions the probe goes through, confidence in those regions, and plot them
 borders_table = plotDistToNearestToTip(m, p, av, st, probe_length, error_length, active_site_start, distance_past_tip_to_plot, show_parent_category, show_region_table); % plots confidence score based on distance to nearest region along probe
 title(['Probe ' num2str(selected_probe)],'color',ProbeColors(selected_probe,:))
+
+f = get(gca, 'Parent');
+% set(f,'Position',[2808 -149 293 1062])
+% set(f,'color','w')
+% set(gca,'fontsize',16)
 
 pause(.05)
 end

@@ -18,7 +18,7 @@ try; screen_size = get(0,'ScreenSize'); screen_size = screen_size(3:4)./[2560 14
 catch; screen_size = [1900 1080]./[2560 1440];
 end
     
-set(fD,'Position', [700*screen_size(1) 40*screen_size(2) 250*screen_size(1) 1200*screen_size(2)])
+set(fD,'Position', [700*screen_size(1) 80*screen_size(2) 280*screen_size(1) 1250*screen_size(2)])
 movegui(fD,'onscreen')
 box off;
 
@@ -96,17 +96,18 @@ for ind = 1:length(t)
 end
 
 
-if ann_type == 1
+if (ann_type == 1 && ~show_parent_category) || (ann_type == 2 && show_parent_category)
     uAnn = unique(ann);
     nC = numel(unique(ann(ann>1)));
-    distinctCmap = flip(distinguishable_colors(nC+2));
+    distinctCmap = flip(distinguishable_colors(nC+1));
 
-    if any(uAnn==1)
+    if any(uAnn==1) || any(uAnn==0)
         distinctCmap = vertcat([1 1 1], distinctCmap); % always make white be ann==1, outside the brain
+        uAnn(uAnn==0)=1; ann(ann==0)=1;
     end
-    dc = zeros(max(uAnn),3); dc(uAnn,:) = distinctCmap(1:end-2,:);
+    dc = zeros(max(uAnn),3); dc(uAnn,:) = distinctCmap(1:end-1,:);
     cmD = dc(ann,:);
-    if ~show_parent_category; cmD = cmD*.6; end
+    cmD = cmD*.3*(1+show_parent_category*.5);
 else
     cmD = ones(length(ann),3) * .05;
 end
@@ -146,15 +147,15 @@ borders = region_borders;
 
 
 for b = 1:length(borders)-1    
-    
+     
     ycInds = (borders(b):min(borders(b+1)-1, length(yc)))+1;
     theseYC = yc(ycInds);
     
 
     if max(theseYC) < active_site_start*10  || max(theseYC) > rpl*10
-        cur_alpha = .4 / ann_type;
+        cur_alpha = .5 / ann_type;
     else
-        cur_alpha = 1  / ann_type;
+        cur_alpha = .7 / ann_type;
     end   
     
     if size(theseYC,2) < 3
@@ -193,6 +194,7 @@ if show_region_table && ann_type==1
      'VariableNames', {'upperBorder', 'lowerBorder', 'acronym', 'name', 'avIndex'})
 end
 
+
 end
 
 
@@ -204,9 +206,9 @@ end
 yyaxis left
 set(gca, 'YTick', midY, 'YTickLabel', acr);
 set(gca, 'YDir','reverse');
-if show_parent_category; set(gca,'Color',[1 1 1]*.8);
-else; set(gca,'Color',[1 1 1]*.7); end
+set(gca,'Color',[1 1 1]*.85);
 xlabel('dist to nearest (um)','color','k');
+set(gca,'fontsize',14)
 
 % ylim([0 yc(borders(end-1))])
 ylim([1 yc(end)+1])
@@ -216,9 +218,9 @@ fD.InvertHardcopy = 'off';
 
 yyaxis right
 if active_site_start> 0
-    set(gca, 'YTick', [1 active_site_start*10 rpl*10 yc(end)], 'YTickLabel', {'0 um' [num2str(active_site_start*10) ' um'] [num2str(rpl*10) ' um'] [num2str(yc(end)) ' um']});
+    set(gca, 'YTick', [1 active_site_start*10 rpl*10 yc(end)], 'YTickLabel', {'0 \mum' [num2str(active_site_start*10) ' \mum'] [num2str(rpl*10) ' \mum'] [num2str(yc(end)) ' \mum']});
 else
-    set(gca, 'YTick', [1 rpl*10 yc(end)], 'YTickLabel', {'0 um' [num2str(rpl*10) ' um'] [num2str(yc(end)) ' um']});
+    set(gca, 'YTick', [1 rpl*10 yc(end)], 'YTickLabel', {'0 \mum' [num2str(rpl*10) ' \mum'] [num2str(yc(end)) ' \mum']});
 end
 set(gca, 'YDir','reverse');
 set(gca,'YColor',[1 1 1]*.2)
