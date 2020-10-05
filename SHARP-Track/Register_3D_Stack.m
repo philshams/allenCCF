@@ -21,6 +21,10 @@ translation_factors = [430 282 1];
 % registered neuron data file to SAVE
 registered_neuron_file = 'C:\Drive\Histology\neuron_data_registered.mat';
 
+% affine transformation to SAVE
+affine_transformation_file = 'C:\Drive\Histology\affine_transformation.mat';
+transformation_matrix_file = 'C:\Drive\Histology\transformation_matrix.mat';
+
 % plane to view ('coronal', 'sagittal', 'transverse') - only tested on coronal place so far!
 plane = 'coronal';
 
@@ -108,7 +112,9 @@ T = inv(Tinv);
 T(:,4) = [0 0 0 1]';
 % generate affine transform object
 affine_transform = affine3d(T);
-
+% save the output
+save(affine_transformation_file, "affine_transform")
+save(transformation_matrix_file, "T")
 
 %% APPLY AND VERIFY 3D AFFINE TRANSFORMATION
 
@@ -143,7 +149,7 @@ xyz_neuron_for_transform = ones(length(xyz_neuron_rescaled), 4);
 xyz_neuron_for_transform(:, 1:3) = xyz_neuron_rescaled;
 xyz_neuron_transformed = xyz_neuron_for_transform * T;
 xyz_neuron_transformed = round(xyz_neuron_transformed(:,1:3));
-
+save(registered_neuron_file, "xyz_neuron_transformed")
 
 %% FUNCTIONS
 
