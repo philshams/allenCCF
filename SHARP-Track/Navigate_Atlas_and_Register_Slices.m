@@ -7,7 +7,7 @@
 
 
 % directory of histology
-processed_images_folder = 'C:\Drive\Histology\brainX\processed'; 
+processed_images_folder = 'C:\Users\SWC\Downloads\test\test\processed'; 
 
 % name the saved probe points, to avoid overwriting another set of probes going in the same folder
 probe_save_name_suffix = ''; 
@@ -19,6 +19,9 @@ template_volume_location = 'C:\Drive\Histology\template_volume_10um.npy';
 
 % plane to view ('coronal', 'sagittal', 'transverse')
 plane = 'coronal';
+
+% to verify 3D transformation from Register_3D_Stack, set this to true
+verifying_3D_transform = true;
 
 
 %% GET PROBE TRAJECTORY POINTS
@@ -43,24 +46,32 @@ elseif strcmp(plane,'transverse')
     tv_plot = permute(tv,[2 3 1]);
 end
 
+% replace template volume with registered image stack
+% after running Register_3D_Stack.m (press 'a' to see region outlines)
+if verifying_3D_transform
+    tv_plot = registered_stack;
+end
+
 % create Atlas viewer figure
 f = figure('Name','Atlas Viewer'); 
 
-% show histology in Slice Viewer
-try; figure(slice_figure_browser); title('');
-catch; slice_figure_browser = figure('Name','Slice Viewer'); end
-reference_size = size(tv_plot);
-sliceBrowser(slice_figure_browser, processed_images_folder, f, reference_size);
+if ~verifying_3D_transform
+    
+    % show histology in Slice Viewer
+    try; figure(slice_figure_browser); title('');
+    catch; slice_figure_browser = figure('Name','Slice Viewer'); end
+    reference_size = size(tv_plot);
+    sliceBrowser(slice_figure_browser, processed_images_folder, f, reference_size);
 
 
-% % use application in Atlas Transform Viewer
-% % use this function if you have a processed_images_folder with appropriately processed .tif histology images
-f = AtlasTransformBrowser(f, tv_plot, av_plot, st, slice_figure_browser, processed_images_folder, probe_save_name_suffix, plane);
+    % % use application in Atlas Transform Viewer
+    % % use this function if you have a processed_images_folder with appropriately processed .tif histology images
+    f = AtlasTransformBrowser(f, tv_plot, av_plot, st, slice_figure_browser, processed_images_folder, probe_save_name_suffix, plane);
 
-
-% use the simpler version, which does not interface with processed slice images
-% just run these two lines instead of the previous 5 lines of code
-% 
-%  save_location = processed_images_folder;
-%  f = allenAtlasBrowser(f, tv_plot, av_plot, st, save_location, probe_save_name_suffix, plane);
-
+else
+    % use the simpler version, which does not interface with processed slice images
+    % just run these two lines instead of the previous 5 lines of code
+    % 
+     save_location = processed_images_folder;
+     f = allenAtlasBrowser(f, tv_plot, av_plot, st, save_location, probe_save_name_suffix, plane);
+end
